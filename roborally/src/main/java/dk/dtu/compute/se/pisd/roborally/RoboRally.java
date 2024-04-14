@@ -58,6 +58,8 @@ public class RoboRally extends Application {
 
         AppController appController = new AppController(this);
 
+        //Her tilknytter appcontroller til roborally
+
         // create the primary scene with the a menu bar and a pane for
         // the board view (which initially is empty); it will be filled
         // when the user creates a new game or loads a game

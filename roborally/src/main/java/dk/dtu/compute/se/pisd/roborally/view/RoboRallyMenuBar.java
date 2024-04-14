@@ -48,11 +48,21 @@ public class RoboRallyMenuBar extends MenuBar {
 
     private MenuItem exitApp;
 
+
+
     public RoboRallyMenuBar(AppController appController) {
         this.appController = appController;
+        // Tilknytter hver menubar til en appcontroller
 
+
+        // Den restrende kode nedenfor opretter menupunkter, som File, New Game osv.
+
+       //FX til file erklærer man en "new Menu" og får getMenus som er alle menus, men vi har bare tilføjet en som er "File"
         controlMenu = new Menu("File");
         this.getMenus().add(controlMenu);
+
+
+        // E ->, er lamda og har en funktion der kan klikke
 
         newGame = new MenuItem("New Game");
         newGame.setOnAction( e -> this.appController.newGame());

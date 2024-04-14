@@ -192,26 +192,29 @@ public class GameController {
      * to the next player
      */
     private void executeNextStep() {
+
         Player currentPlayer = board.getCurrentPlayer();
         if (board.getPhase() == Phase.ACTIVATION && currentPlayer != null) {
+
             int step = board.getStep();
             if (step >= 0 && step < Player.NO_REGISTERS) {
                 CommandCard card = currentPlayer.getProgramField(step).getCard();
-                //V3 Vi laver en if Statement, fordi vi skal sætte pause på spillet, da vi skal gå tilbage til GUI
                 if (card != null) {
                     Command command = card.command;
-                    //Her ser vi om den er interactive eller ej
                     if (command.isInteractive()) {
                         board.setPhase(Phase.PLAYER_INTERACTION);
                         return;
                     }
-                    executeCommand(currentPlayer, command);
 
+                    executeCommand(currentPlayer, command);
                 }
                 int nextPlayerNumber = board.getPlayerNumber(currentPlayer) + 1;
                 if (nextPlayerNumber < board.getPlayersNumber()) {
                     board.setCurrentPlayer(board.getPlayer(nextPlayerNumber));
                 } else {
+                    //--> execute actions on fields!
+                    //--> check checkpoints for alle spillere
+                    executeActionspace();
                     step++;
 
                     if (step < Player.NO_REGISTERS) {
@@ -334,6 +337,9 @@ public class GameController {
             Wall wallspacetarget = space1.getWall();
             Heading heading2 = player.getHeading();
 
+            //Getneighbour er en metode der tjekker om en spiller kan flytte til et givent  felt. Hvis den er null betyder det at robotten ikk kaan fortsætte den retning
+
+
 
 
             player.setHeading(heading.prev());
@@ -348,6 +354,7 @@ public class GameController {
 
             if (space1.getCheckpoint() != null) {
                 int value = player.getCheckpointValue();
+                int nextCheckpointNumber = space1.getCheckpoint().getCheckpointnumber() + 1; // Find nummeret på det næste checkpoint
                 switch (value) {
                     case 0:
                         if (player.getCheckpointValue() == 0 && space1.getCheckpoint().getCheckpointnumber() == 1) {
@@ -377,9 +384,13 @@ public class GameController {
                     case 5:
                         if (player.getCheckpointValue() == 5 && space1.getCheckpoint().getCheckpointnumber() == 6) {
                             player.setCheckpointValue(6);
+
                         }
                         break;
                 }
+
+
+
 
 
 
@@ -413,7 +424,22 @@ public class GameController {
             }
 
         }
+
     }
+
+    public void executeActionspace() {
+        int i;
+        for (i = 0; i < board.getPlayersNumber(); ++i) {
+            Player player = board.getPlayer(i);
+            Space space = player.getSpace();
+            for (FieldAction action : space.getActions()) {
+                GameController gameController = new GameController(board);
+                action.doAction(gameController, space);
+            }
+        }
+    }
+
+
 
 
     // TODO Assignment V2
